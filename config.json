@@ -1,0 +1,16 @@
+{
+  "hosts": {
+    "rabbitmq": {
+      "address": "192.168.1.220",
+      "port": 5672
+    },
+    "mysql": {
+      "address": "10.0.0.1",
+      "port": 3306
+    },
+    "cache": {
+      "address": "10.0.0.2",
+      "port": 6379
+    }
+  }
+}
