@@ -1,8 +1,8 @@
 package gomqtool
 
 import (
-	"log"
 	"fmt"
+	"log"
 )
 
 //helper function check return value for amqp call

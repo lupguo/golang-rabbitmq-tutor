@@ -1,13 +1,13 @@
 package main
 
 import (
-	"log"
+	"flag"
 	"fmt"
 	"github.com/streadway/amqp"
-	"flag"
+	"log"
 )
 
-func failOnError(err error, msg string)  {
+func failOnError(err error, msg string) {
 	if err != nil {
 		log.Panicf("%s: %s", msg, err)
 		panic(fmt.Sprintf("%s: %s", msg, err))
@@ -46,9 +46,9 @@ func main() {
 		false,
 		false,
 		amqp.Publishing{
-			DeliveryMode:amqp.Persistent,
-			ContentType:"text/plain",
-			Body: []byte(*body),
+			DeliveryMode: amqp.Persistent,
+			ContentType:  "text/plain",
+			Body:         []byte(*body),
 		},
 	)
 	failOnError(err, "Failed to publish a message")

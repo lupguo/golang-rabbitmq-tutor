@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"github.com/streadway/amqp"
 	"log"
-	"fmt"
 )
 
 //helper function check return value for amqp call

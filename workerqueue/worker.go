@@ -1,10 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/streadway/amqp"
 	"log"
-	"fmt"
-	"bytes"
 	"time"
 )
 
@@ -54,7 +54,7 @@ func main() {
 	msgs, err := ch.Consume(
 		q.Name,
 		"",
-		false,	//autoAck set false, must through d.Ack(false) acknowledge
+		false, //autoAck set false, must through d.Ack(false) acknowledge
 		false,
 		false,
 		false,
@@ -70,7 +70,7 @@ func main() {
 			dotCount := bytes.Count(d.Body, []byte("."))
 			log.Printf("Work need %vs", dotCount)
 			t := time.Duration(dotCount)
-			time.Sleep(t *time.Second)
+			time.Sleep(t * time.Second)
 			log.Printf("Done")
 
 			//manual ack

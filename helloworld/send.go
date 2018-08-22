@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
 	"fmt"
 	"github.com/streadway/amqp"
+	"log"
 )
 
 //helper function check return value for amqp call
@@ -41,7 +41,7 @@ func main() {
 	body := "HeyMan, Cool!!"
 	pubMsg := amqp.Publishing{
 		ContentType: "text/plain",
-		Body: []byte(body),
+		Body:        []byte(body),
 	}
 
 	//use channel to publish a message to queue

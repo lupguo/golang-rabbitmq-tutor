@@ -1,10 +1,10 @@
 package main
 
 import (
-	"log"
+	"flag"
 	"fmt"
 	"github.com/streadway/amqp"
-	"flag"
+	"log"
 )
 
 func failOnError(err error, msg string) {
