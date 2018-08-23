@@ -4,16 +4,19 @@ import (
 	"fmt"
 	"github.com/micro/go-config"
 	"github.com/micro/go-config/source/file"
+	"gomqtool"
 	"log"
+	"strings"
 )
 
 func main() {
 	//new config
 	//conf := config.NewConfig()
+	gomqtool.Init()
 
 	//load file
 	err := config.Load(file.NewSource(
-		file.WithPath(`I:\Terry.Rod\goLang\rabbitmqGo\config.json`),
+		file.WithPath(gomqtool.TourConfig.Path),
 	))
 	if err != nil {
 		log.Fatalf("%s: %s", "Config load error", err)
@@ -48,6 +51,11 @@ func main() {
 	fmt.Println(cacheAddress, cachePort)
 
 	//method 4
-	port := config.Get("datastore","metric","host","port").Int(3378)
+	port := config.Get("datastore", "metric", "port").Int(1000)
+	fmt.Println(port)
+
+	//method 5
+	key := "datastore.metric.port"
+	port = config.Get(strings.Split(key, ".")...).Int(3306)
 	fmt.Println(port)
 }

@@ -1,9 +1,9 @@
 package gomqtool
 
 import (
+	"flag"
 	"fmt"
 	"log"
-	"flag"
 )
 
 ////variable
@@ -17,6 +17,7 @@ import (
 type Config struct {
 	Path string
 }
+
 var TourConfig Config
 
 //var AppConfig = Config{
@@ -33,7 +34,7 @@ func FailOnError(err error, msg string) {
 
 //get config path from cmdline
 func Init() {
-	ConfigFile := flag.String("config_file", ".", "set tour app config path")
+	ConfigFile := flag.String("config_file", "./config.json", "set tour app config path")
 	flag.Parse()
 
 	TourConfig.Path = *ConfigFile

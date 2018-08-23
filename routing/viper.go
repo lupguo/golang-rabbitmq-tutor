@@ -1,10 +1,17 @@
 package main
 
 import (
-	"gomqtool"
 	"fmt"
 	"github.com/spf13/viper"
+	"gomqtool"
 )
+
+type rabbitmqConfig struct {
+	user    string
+	pass    string
+	address string
+	port    int
+}
 
 func main() {
 	//init
@@ -18,5 +25,11 @@ func main() {
 	}
 
 	//get config info
-	fmt.Println(fmt.Sprintf("amqp://%s:%s@%s:%s", viper.Get("rabbitmq")))
+	fmt.Printf("%T \n%v", viper.Get("rabbitmq"), viper.Get("rabbitmq"))
+	fmt.Println(fmt.Sprintf("amqp://%v:%v@%v:%v",
+		viper.Get("rabbitmq.user"),
+		viper.Get("rabbitmq.pass"),
+		viper.Get("rabbitmq.address"),
+		viper.Get("rabbitmq.port"),
+	))
 }
