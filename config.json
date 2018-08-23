@@ -1,16 +1,24 @@
 {
   "hosts": {
-    "rabbitmq": {
-      "address": "192.168.1.220",
-      "port": 5672
+  },
+  "rabbitmq": {
+    "address": "10.40.2.183",
+    "port": 5672,
+    "user": "guest",
+    "pass": "guest"
+  },
+  "cache": {
+    "address": "10.0.0.2",
+    "port": 6379
+  },
+  "datastore": {
+    "metric": {
+      "host": "127.0.0.1",
+      "port": 3099
     },
-    "mysql": {
-      "address": "10.0.0.1",
-      "port": 3306
-    },
-    "cache": {
-      "address": "10.0.0.2",
-      "port": 6379
+    "warehouse": {
+      "host": "198.0.0.1",
+      "port": 2112
     }
   }
 }

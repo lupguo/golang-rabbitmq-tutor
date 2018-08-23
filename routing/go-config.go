@@ -13,15 +13,15 @@ func main() {
 
 	//load file
 	err := config.Load(file.NewSource(
-		file.WithPath("/data/go/rabbitmq-golang-totur/config.json"),
+		file.WithPath(`I:\Terry.Rod\goLang\rabbitmqGo\config.json`),
 	))
 	if err != nil {
 		log.Fatalf("%s: %s", "Config load error", err)
 	}
 
 	//read config
-	//conf := config.Map()
-	//fmt.Println(conf["hosts"])
+	conf := config.Map()
+	fmt.Println(conf)
 
 	//Scan the config into a struct
 	type Host struct {
@@ -46,4 +46,8 @@ func main() {
 	cacheAddress := config.Get("hosts", "cache", "address").String("localhost")
 	cachePort := config.Get("hosts", "cache", "port").Int(3000)
 	fmt.Println(cacheAddress, cachePort)
+
+	//method 4
+	port := config.Get("datastore","metric","host","port").Int(3378)
+	fmt.Println(port)
 }
