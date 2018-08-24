@@ -4,32 +4,26 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"gomqtool"
+	"log"
 )
 
-type rabbitmqConfig struct {
-	user    string
-	pass    string
-	address string
-	port    int
+var Config = gomqtool.Config
+
+func init() {
+	log.Println("Viper init...")
+	log.Println(Config)
+
 }
 
 func main() {
-	//init
-	gomqtool.Init()
-
-	//viper config manage
-	viper.SetConfigFile(gomqtool.TourConfig.Path)
-	err := viper.ReadInConfig()
-	if err != nil {
-		gomqtool.FailOnError(err, "Viper cannot read in config")
-	}
-
 	//get config info
-	fmt.Printf("%T \n%v", viper.Get("rabbitmq"), viper.Get("rabbitmq"))
-	fmt.Println(fmt.Sprintf("amqp://%v:%v@%v:%v",
-		viper.Get("rabbitmq.user"),
-		viper.Get("rabbitmq.pass"),
-		viper.Get("rabbitmq.address"),
-		viper.Get("rabbitmq.port"),
-	))
+	amqpUrl := fmt.Sprintf("amqp://%s:%s@%s:%d",
+		viper.GetString("rabbitmq.user"),
+		viper.GetString("rabbitmq.pass"),
+		viper.GetString("rabbitmq.address"),
+		viper.GetInt("rabbitmq.port"),
+	)
+
+	fmt.Println(amqpUrl)
+
 }
