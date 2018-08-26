@@ -1,29 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"github.com/streadway/amqp"
+	"github.com/tkstorm/golang-rabbitmq-tutor/gomqtool"
 	"log"
 )
 
-//helper function check return value for amqp call
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
-		panic(fmt.Sprintf("%s: %s", msg, err))
-	}
-}
+var config = gomqtool.Config
 
 func main() {
 	//connect rabbitmq
-	conn, err := amqp.Dial("amqp://guest:guest@10.40.2.183:5672/")
-	failOnError(err, "Failed to connect to RabbitMQ")
+	conn, err := amqp.Dial(config.AmqpUrl)
+	gomqtool.FailOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
 	//conn is abstract of the socket
 	//create channel for api
 	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
+	gomqtool.FailOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
 	//must declare a queue before send message
@@ -38,7 +32,7 @@ func main() {
 		false,
 		nil,
 	)
-	failOnError(err, "Failed to declare a queue")
+	gomqtool.FailOnError(err, "Failed to declare a queue")
 
 	//register a consumer for queue by channel
 	msgs, err := ch.Consume(

@@ -16,6 +16,7 @@ type appConfig struct {
 	Version  string
 	Category string
 	File     string
+	AmqpUrl  string
 }
 
 var Config = appConfig{
@@ -23,9 +24,10 @@ var Config = appConfig{
 	Version:  "0.0.1",
 	Category: "tour",
 	File:     "./config.json",
+	AmqpUrl:  "amqp://guest:guest@127.0.0.1:5672",
 }
 
-var rabbitmqConfig struct {
+type RabbitmqConfig *struct {
 	user string
 	pass string
 	ip   string
@@ -46,23 +48,32 @@ func init() {
 	log.Printf(`[app:"%v" version:"%s"]`, Config.AppName, Config.Version)
 	log.Println("Common init...")
 
-	//manual cmd input
-	//pflag.StringVar(&rabbitmqConfig.ip, "rabbitmq-ip","127.0.0.1", "rabbitmq host ip")
-	//pflag.IntVar(&rabbitmqConfig.port, "port", 3306, "rabbitmq ip port")
-	//log.Printf("[rabbitmq address]: %v:%v", rabbitmqConfig.ip, rabbitmqConfig.port)
-	//pflag.Parse()
-
-	//pflag get config_file
-	pflag.StringVarP(&Config.File, "config_file", "c", "./config.json", "app config path")
+	//get config_file from cmd and read it by pflag
+	pflag.StringVarP(&Config.File, "config_file", "c", Config.File, "app config path")
+	pflag.StringVar(&Config.AmqpUrl, "amqp_url", Config.AmqpUrl, "rabbitmq ampq url setting")
 	pflag.Parse()
 	log.Printf("[%s]: %s", "config path", Config.File)
 
-	//viper config read
+	//update config amqp_url
+	if pflag.Lookup("config_file") == nil {
+		Config.AmqpUrl = getAmqpUrlFromConfig()
+	}
+
+}
+
+func getAmqpUrlFromConfig() string {
 	viper.SetConfigFile(Config.File)
 	err := viper.ReadInConfig()
 	if err != nil {
 		FailOnError(err, "Viper cannot read in config")
 	}
+
+	return fmt.Sprintf("amqp://%s:%s@%s:%d",
+		viper.GetString("rabbitmq.user"),
+		viper.GetString("rabbitmq.pass"),
+		viper.GetString("rabbitmq.address"),
+		viper.GetInt("rabbitmq.port"),
+	)
 }
 
 //get config by micro/go-config
