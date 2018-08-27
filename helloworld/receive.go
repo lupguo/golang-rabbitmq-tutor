@@ -44,7 +44,7 @@ func main() {
 		false,
 		nil,
 	)
-	failOnError(err, "Failed to register a consumer")
+	gomqtool.FailOnError(err, "Failed to register a consumer")
 
 	//read the message from a channel in a goroutine
 	forever := make(chan bool)

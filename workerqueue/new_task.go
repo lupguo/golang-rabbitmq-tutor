@@ -2,28 +2,23 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/streadway/amqp"
+	"github.com/tkstorm/golang-rabbitmq-tutor/gomqtool"
 	"log"
 )
 
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Panicf("%s: %s", msg, err)
-		panic(fmt.Sprintf("%s: %s", msg, err))
-	}
-}
+var Config = gomqtool.Config
 
 func main() {
 	//connect rabbitmq
-	conn, err := amqp.Dial("amqp://guest:guest@10.40.2.183:5672/")
-	failOnError(err, "Failed to connect to RabbitMQ")
+	conn, err := amqp.Dial(Config.AmqpUrl)
+	gomqtool.FailOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
 	//conn is abstract of the socket
 	//create channel for api
 	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
+	gomqtool.FailOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
 	//must declare a queue before send message
@@ -35,23 +30,51 @@ func main() {
 		false,
 		nil,
 	)
-	failOnError(err, "Failed to declare a queue")
+	gomqtool.FailOnError(err, "Failed to declare a queue")
 
 	//body receive msg from cmdline
-	body := flag.String("body", "Hi..", "message body")
+	body := flag.String("body", "Hi.....", "message body")
 	flag.Parse()
-	err = ch.Publish(
+
+	//msg
+	msg := amqp.Publishing{
+		DeliveryMode: amqp.Persistent,
+		ContentType:  "text/plain",
+		Body:         []byte(*body),
+	}
+
+	//done := make(chan bool)
+	//for i := 0; i < 20; i++ {
+
+	for {
+		work(ch, q, msg, 1)
+	}
+	//<-done
+
+	log.Printf("[x] Send Msg Task Ok.")
+}
+
+func work(ch *amqp.Channel, q amqp.Queue, msg amqp.Publishing, i int) {
+	//for k := 0; k < 20000; k++ {
+
+	err := ch.Publish(
 		"",
 		q.Name,
 		false,
 		false,
-		amqp.Publishing{
-			DeliveryMode: amqp.Persistent,
-			ContentType:  "text/plain",
-			Body:         []byte(*body),
-		},
+		msg,
 	)
-	failOnError(err, "Failed to publish a message")
+	if err != nil {
+		log.Printf("%v: %s\n", err, "Failed to publish a message")
+	} else {
+		log.Printf("send msg: %s\n", msg.Body)
+	}
 
-	log.Printf(" [x] Send %s", *body)
+	//for j := 0; j < 3; j++ {
+	//	log.Printf("run[%d][%d] ", i, j)
+	//	time.Sleep(1 * time.Second)
+	//}
+	log.Printf("run[%d] goroutines finished. \n", i)
+	//done <- true
+	//}
 }

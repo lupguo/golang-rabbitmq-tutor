@@ -48,27 +48,18 @@ func init() {
 	log.Printf(`[app:"%v" version:"%s"]`, Config.AppName, Config.Version)
 	log.Println("Common init...")
 
-	//get config_file from cmd and read it by pflag
+	//get config file from cmd by pflag
 	pflag.StringVarP(&Config.File, "config_file", "c", Config.File, "app config path")
-	pflag.StringVar(&Config.AmqpUrl, "amqp_url", Config.AmqpUrl, "rabbitmq ampq url setting")
 	pflag.Parse()
 	log.Printf("[%s]: %s", "config path", Config.File)
 
-	//update config amqp_url
-	if pflag.Lookup("config_file") == nil {
-		Config.AmqpUrl = getAmqpUrlFromConfig()
-	}
-
-}
-
-func getAmqpUrlFromConfig() string {
+	//get amqpurl from config file
 	viper.SetConfigFile(Config.File)
 	err := viper.ReadInConfig()
 	if err != nil {
 		FailOnError(err, "Viper cannot read in config")
 	}
-
-	return fmt.Sprintf("amqp://%s:%s@%s:%d",
+	Config.AmqpUrl = fmt.Sprintf("amqp://%s:%s@%s:%d",
 		viper.GetString("rabbitmq.user"),
 		viper.GetString("rabbitmq.pass"),
 		viper.GetString("rabbitmq.address"),
